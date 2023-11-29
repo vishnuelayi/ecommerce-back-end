@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "description": "A sleek e-commerce site powered by MERN stack! 🚀 Node.js for server, Express for robust APIs, MongoDB for scalable data storage, and React for a dynamic front end. Seamlessly merging tech and fashion. 💻🌐 #MERN #Ecommerce #TechFashion",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
   },
   "repository": {
     "type": "git",
@@ -15,5 +17,15 @@
   "bugs": {
     "url": "https://github.com/vishnuelayi/tshirt-ecommerce-app/issues"
   },
-  "homepage": "https://github.com/vishnuelayi/tshirt-ecommerce-app#readme"
+  "homepage": "https://github.com/vishnuelayi/tshirt-ecommerce-app#readme",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "mongoose": "^8.0.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
 }
