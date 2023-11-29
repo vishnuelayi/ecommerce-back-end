@@ -1,0 +1,19 @@
+{
+  "name": "tshirt-ecommerce",
+  "version": "1.0.0",
+  "description": "A sleek e-commerce site powered by MERN stack! 🚀 Node.js for server, Express for robust APIs, MongoDB for scalable data storage, and React for a dynamic front end. Seamlessly merging tech and fashion. 💻🌐 #MERN #Ecommerce #TechFashion",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vishnuelayi/tshirt-ecommerce-app.git"
+  },
+  "author": "Vishnu Elayi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/vishnuelayi/tshirt-ecommerce-app/issues"
+  },
+  "homepage": "https://github.com/vishnuelayi/tshirt-ecommerce-app#readme"
+}
