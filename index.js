@@ -13,11 +13,13 @@ const MONGO_URI = process.env.DB_URI;
 
 const app = express();
 
-app.use("/", registerRouter);
+
 app.use(cors());
 
-app.use(bodyParser.json({ limit: "30mb", extended: true }));
-app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: false }));
+
+app.use("/api/user", registerRouter);
 
 app.listen(PORT, () => console.log(`Server running on port number: ${PORT}`));
 
