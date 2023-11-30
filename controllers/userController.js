@@ -2,6 +2,7 @@ import generateToken from "../config/jsonWebToken.js";
 import User from "../models/userModel.js";
 import asyncHandler from "express-async-handler";
 
+//register a new user
 export const createUser = asyncHandler(async (req, res) => {
   const email = req.body.email;
   const findUser = await User.findOne({ email: email });
@@ -13,6 +14,7 @@ export const createUser = asyncHandler(async (req, res) => {
   }
 });
 
+//login authentication
 export const loginCntrlr = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
@@ -25,9 +27,38 @@ export const loginCntrlr = asyncHandler(async (req, res) => {
       lastname: findUser?.lastname,
       email: findUser?.email,
       mobile: findUser?.mobile,
-      token: generateToken(findUser?._id)
+      token: generateToken(findUser?._id),
     });
   } else {
     throw new Error("Invalid Credentials !");
+  }
+});
+
+//get all users
+export const getAllUsers = asyncHandler(async (req, res) => {
+  try {
+    const getUsers = await User.find();
+    res.json(getUsers);
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+//get a perticular user
+export const getOneUser = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const user = await User.findById(id);
+
+    if (!user) {
+      // If no user is found with the given id, return an error response
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json(user);
+  } catch (error) {
+    // Instead of throwing a new Error, you can pass the error to the asyncHandler
+    throw error;
   }
 });
