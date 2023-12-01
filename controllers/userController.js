@@ -62,3 +62,34 @@ export const getOneUser = asyncHandler(async (req, res) => {
     throw error;
   }
 });
+
+//delete a user
+export const deleteOneUser = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  try {
+    const deleteUser = await User.findByIdAndDelete(id);
+    res.json(deleteUser);
+  } catch (error) {
+    throw error;
+  }
+});
+
+//update a user
+export const updatedUser = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  try {
+    const updateUser = await User.findByIdAndUpdate(
+      id,
+      {
+        firstname: req?.body?.firstname,
+        lastname: req?.body?.lastname,
+        email: req?.body?.email,
+        mobile: req?.body?.mobile,
+      },
+      { new: true }
+    );
+    res.json(updateUser);
+  } catch (error) {
+    throw error;
+  }
+});
