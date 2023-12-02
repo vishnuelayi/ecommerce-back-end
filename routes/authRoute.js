@@ -7,13 +7,14 @@ import {
   loginCntrlr,
   updatedUser,
 } from "../controllers/userController.js";
+import { authMiddleware } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
 router.post("/register", createUser);
 router.post("/login", loginCntrlr);
 router.get("/all-users", getAllUsers);
-router.get("/:id", getOneUser);
+router.get("/:id",authMiddleware, getOneUser);
 router.delete("/:id", deleteOneUser);
 router.put("/:id", updatedUser);
 
