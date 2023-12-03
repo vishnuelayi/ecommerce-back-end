@@ -1,6 +1,7 @@
 import generateToken from "../config/jsonWebToken.js";
 import User from "../models/userModel.js";
 import asyncHandler from "express-async-handler";
+import { validateMongoID } from "../utils/validateMongoId.js";
 
 //register a new user
 export const createUser = asyncHandler(async (req, res) => {
@@ -47,6 +48,7 @@ export const getAllUsers = asyncHandler(async (req, res) => {
 //get a perticular user
 export const getOneUser = asyncHandler(async (req, res) => {
   const { id } = req.params;
+  validateMongoID(id);
 
   try {
     const user = await User.findById(id);
@@ -77,6 +79,7 @@ export const deleteOneUser = asyncHandler(async (req, res) => {
 //update a user
 export const updatedUser = asyncHandler(async (req, res) => {
   const { _id } = req.user;
+  validateMongoID(_id);
   try {
     const updateUser = await User.findByIdAndUpdate(
       _id,
