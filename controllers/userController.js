@@ -76,10 +76,10 @@ export const deleteOneUser = asyncHandler(async (req, res) => {
 
 //update a user
 export const updatedUser = asyncHandler(async (req, res) => {
-  const { id } = req.params;
+  const { _id } = req.user;
   try {
     const updateUser = await User.findByIdAndUpdate(
-      id,
+      _id,
       {
         firstname: req?.body?.firstname,
         lastname: req?.body?.lastname,
