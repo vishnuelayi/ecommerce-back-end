@@ -1,9 +1,10 @@
 import express from "express";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
-import registerRouter from "./routes/authRoute.js";
+import authRouter from "./routes/authRoute.js";
 import cors from "cors";
 import bodyParser from "body-parser";
+import cookieParser from "cookie-parser";
 import { errorHandler, notFound } from "./middlewares/errorHandler.js";
 
 dotenv.config();
@@ -17,8 +18,9 @@ app.use(cors());
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
 
-app.use("/api/user", registerRouter);
+app.use("/api/user", authRouter);
 app.use(notFound);
 app.use(errorHandler);
 
