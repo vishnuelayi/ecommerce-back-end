@@ -4,6 +4,7 @@ import {
   deleteOneUser,
   getAllUsers,
   getOneUser,
+  handleRefreshToken,
   loginCntrlr,
   updatedUser,
 } from "../controllers/userController.js";
@@ -13,6 +14,7 @@ const router = express.Router();
 
 router.post("/register", createUser);
 router.post("/login", loginCntrlr);
+router.get("/refresh", handleRefreshToken);
 router.get("/all-users", getAllUsers);
 router.get("/:id",authMiddleware,isAdmin, getOneUser);
 router.delete("/:id", deleteOneUser);

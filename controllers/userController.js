@@ -23,14 +23,16 @@ export const loginCntrlr = asyncHandler(async (req, res) => {
   const findUser = await User.findOne({ email });
 
   if (findUser && (await findUser.isPasswordMatched(password))) {
-
-    const refreshToken = await generateRefreshToken(findUser._id); 
-    const updateUser = await User.findByIdAndUpdate(findUser._id, {refreshToken: refreshToken}, {new: true})
+    const refreshToken = await generateRefreshToken(findUser._id);
+    const updateUser = await User.findByIdAndUpdate(
+      findUser._id,
+      { refreshToken: refreshToken },
+      { new: true }
+    );
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
-      maxAge: 72 * 60 * 60 * 1000
-    })
-
+      maxAge: 72 * 60 * 60 * 1000,
+    });
 
     res.json({
       _id: findUser?._id,
@@ -84,6 +86,17 @@ export const deleteOneUser = asyncHandler(async (req, res) => {
   } catch (error) {
     throw error;
   }
+});
+
+//handle refresh token
+
+export const handleRefreshToken = asyncHandler(async (req, res) => {
+  const cookie = req.cookies;
+  if (!cookie?.refreshToken) throw new Error("No Refresh Token In Cookies");
+  const refreshToken = cookie.refreshToken;
+  const user = await User.findOne({ refreshToken });
+  if (!user) throw new Error("No User Found Using This Refresh Token");
+  res.json(user);
 });
 
 //update a user
