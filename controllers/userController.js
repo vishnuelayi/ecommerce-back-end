@@ -106,6 +106,28 @@ export const handleRefreshToken = asyncHandler(async (req, res) => {
   });
 });
 
+//logout
+
+export const logout = asyncHandler(async (req, res) => {
+  const cookie = req.cookies;
+  if (!cookie?.refreshToken) {
+    throw new Error("No Token Found");
+  }
+
+  const refreshToken = cookie.refreshToken;
+  const user = await User.findOne({ refreshToken });
+
+  if (!user) {
+    res.clearCookie("refreshToken", { httpOnly: true, secure: true });
+    return res.sendStatus(204);
+  }
+
+  await User.findByIdAndUpdate(user._id, { refreshToken: "" });
+
+  res.clearCookie("refreshToken", { httpOnly: true, secure: true });
+  res.sendStatus(204);
+});
+
 //update a user
 export const updatedUser = asyncHandler(async (req, res) => {
   const { _id } = req.user;

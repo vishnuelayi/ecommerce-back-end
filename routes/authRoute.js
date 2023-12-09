@@ -6,6 +6,7 @@ import {
   getOneUser,
   handleRefreshToken,
   loginCntrlr,
+  logout,
   updatedUser,
 } from "../controllers/userController.js";
 import { authMiddleware, blockUser, isAdmin, unBlockUser } from "../middlewares/authMiddleware.js";
@@ -15,6 +16,7 @@ const router = express.Router();
 router.post("/register", createUser);
 router.post("/login", loginCntrlr);
 router.get("/refresh", handleRefreshToken);
+router.get("/logout", logout);
 router.get("/all-users", getAllUsers);
 router.get("/:id",authMiddleware,isAdmin, getOneUser);
 router.delete("/:id", deleteOneUser);
