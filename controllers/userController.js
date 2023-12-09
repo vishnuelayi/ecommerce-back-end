@@ -3,6 +3,7 @@ import User from "../models/userModel.js";
 import asyncHandler from "express-async-handler";
 import { validateMongoID } from "../utils/validateMongoId.js";
 import generateRefreshToken from "../config/refreshToken.js";
+import jwt, { decode } from "jsonwebtoken";
 
 //register a new user
 export const createUser = asyncHandler(async (req, res) => {
@@ -96,7 +97,13 @@ export const handleRefreshToken = asyncHandler(async (req, res) => {
   const refreshToken = cookie.refreshToken;
   const user = await User.findOne({ refreshToken });
   if (!user) throw new Error("No User Found Using This Refresh Token");
-  res.json(user);
+  jwt.verify(refreshToken, process.env.JWT_SECRET, (err, decode) => {
+    if (err || user.id !== decode.id) {
+      throw new Error("Something Went Wrong In Refresh Token");
+    }
+    const accessToken = generateToken(user?._id);
+    res.json({ accessToken });
+  });
 });
 
 //update a user
