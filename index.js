@@ -6,6 +6,7 @@ import productRouter from "./routes/productRoute.js";
 import cors from "cors";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
+import morgan from "morgan";
 import { errorHandler, notFound } from "./middlewares/errorHandler.js";
 
 dotenv.config();
@@ -17,6 +18,7 @@ const app = express();
 
 app.use(cors());
 
+app.use(morgan("dev"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());

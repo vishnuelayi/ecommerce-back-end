@@ -22,14 +22,17 @@ const productSchema = mongoose.Schema(
       required: true,
     },
     category: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Category",
+      type: String,
+      required: true,
     },
     brand: {
       type: String,
-      enum: ["Jack & Jones", "Levi's", "Adidas"],
+      required: true,
     },
-    quantity: Number,
+    quantity: {
+      type: Number,
+      required: true,
+    },
     sold: {
       type: Number,
       default: 0,
@@ -39,7 +42,7 @@ const productSchema = mongoose.Schema(
     },
     color: {
       type: String,
-      enum: ["Black", "Red", "Blue"],
+      required: true,
     },
     ratings: [
       {
