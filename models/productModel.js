@@ -50,6 +50,10 @@ const productSchema = mongoose.Schema(
         postedBy: { type: mongoose.Schema.Types.ObjectId },
       },
     ],
+    passwordChangedAt:Date,
+    passwordResetToken:String,
+    passwordResetExpires:Date,
+
   },
   { timestamps: true }
 );
