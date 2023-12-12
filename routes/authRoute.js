@@ -2,6 +2,7 @@ import express from "express";
 import {
   createUser,
   deleteOneUser,
+  forgotPasswordToken,
   getAllUsers,
   getOneUser,
   handleRefreshToken,
@@ -20,6 +21,7 @@ import {
 const router = express.Router();
 
 router.post("/register", createUser);
+router.post("/forgot-password-token", forgotPasswordToken)
 router.post("/login", loginCntrlr);
 router.put("/password", authMiddleware, updatePassword);
 router.get("/refresh", handleRefreshToken);
