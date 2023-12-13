@@ -8,6 +8,7 @@ import {
   handleRefreshToken,
   loginCntrlr,
   logout,
+  resetPassword,
   updatePassword,
   updatedUser,
 } from "../controllers/userController.js";
@@ -21,7 +22,8 @@ import {
 const router = express.Router();
 
 router.post("/register", createUser);
-router.post("/forgot-password-token", forgotPasswordToken)
+router.post("/forgot-password-token", forgotPasswordToken);
+router.put("/reset-password/:token", resetPassword);
 router.post("/login", loginCntrlr);
 router.put("/password", authMiddleware, updatePassword);
 router.get("/refresh", handleRefreshToken);
