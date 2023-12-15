@@ -1,7 +1,8 @@
 import Blog from "../models/blogModel.js";
 import asyncHandler from "express-async-handler";
 import User from "../models/userModel.js";
-import { isValidObjectId } from "mongoose";
+
+import { validateMongoID } from "../utils/validateMongoId.js";
 
 export const createBlog = asyncHandler(async (req, res) => {
   try {
@@ -14,7 +15,7 @@ export const createBlog = asyncHandler(async (req, res) => {
 
 export const updateBlog = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  isValidObjectId(id);
+  validateMongoID(id);
   try {
     const updatedBlog = await Blog.findByIdAndUpdate(id, req.body, {
       new: true,
@@ -27,9 +28,11 @@ export const updateBlog = asyncHandler(async (req, res) => {
 
 export const getBlog = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  isValidObjectId(id);
+  validateMongoID(id);
   try {
-    const getaBlog = await Blog.findById(id);
+    const getaBlog = await Blog.findById(id)
+      .populate("likes")
+      .populate("dislikes");
     await Blog.findByIdAndUpdate(id, { $inc: { numViews: 1 } }, { new: true });
     res.json(getaBlog);
   } catch (error) {
@@ -48,7 +51,7 @@ export const getAllBlogs = asyncHandler(async (req, res) => {
 
 export const deleteBlog = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  isValidObjectId(id);
+  validateMongoID(id);
   try {
     const deletedBlog = await Blog.findByIdAndDelete(id);
     res.json(deletedBlog);
@@ -59,7 +62,7 @@ export const deleteBlog = asyncHandler(async (req, res) => {
 
 export const liketheBlog = asyncHandler(async (req, res) => {
   const { blogId } = req.body;
-  isValidObjectId(blogId);
+  validateMongoID(blogId);
   // Find the blog which you want to be liked
   const blog = await Blog.findById(blogId);
   // find the login user
@@ -105,13 +108,14 @@ export const liketheBlog = asyncHandler(async (req, res) => {
 });
 
 export const disliketheBlog = asyncHandler(async (req, res) => {
+  console.log(req.body);
   const { blogId } = req.body;
   // Find the blog which you want to be liked
   const blog = await Blog.findById(blogId);
   // find the login user
   const loginUserId = req?.user?._id;
   // find if the user has liked the blog
-  const isDisLiked = blog?.isDisliked;
+  const isDisLiked = blog?.isDisLiked;
   // find if the user has disliked the blog
   const alreadyLiked = blog?.likes?.find(
     (userId) => userId?.toString() === loginUserId?.toString()
@@ -132,7 +136,7 @@ export const disliketheBlog = asyncHandler(async (req, res) => {
       blogId,
       {
         $pull: { dislikes: loginUserId },
-        isDisliked: false,
+        isDisLiked: false,
       },
       { new: true }
     );

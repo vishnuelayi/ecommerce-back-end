@@ -4,6 +4,8 @@ import mongoose from "mongoose";
 import authRouter from "./routes/authRoute.js";
 import productRouter from "./routes/productRoute.js";
 import blogRouter from "./routes/blogRoute.js";
+import categoryRouter from "./routes/categoryRoute.js";
+import blogCategoryRouter from "./routes/blogCatRoute.js"
 import cors from "cors";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
@@ -21,12 +23,14 @@ app.use(cors());
 
 app.use(morgan("dev"));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.use("/api/user", authRouter);
 app.use("/api/product", productRouter);
 app.use("/api/blog", blogRouter);
+app.use("/api/category", categoryRouter);
+app.use("/api/blogcategory", blogCategoryRouter)
 
 app.use(notFound);
 app.use(errorHandler);
