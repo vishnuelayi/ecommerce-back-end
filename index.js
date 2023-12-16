@@ -5,7 +5,8 @@ import authRouter from "./routes/authRoute.js";
 import productRouter from "./routes/productRoute.js";
 import blogRouter from "./routes/blogRoute.js";
 import categoryRouter from "./routes/categoryRoute.js";
-import blogCategoryRouter from "./routes/blogCatRoute.js"
+import blogCategoryRouter from "./routes/blogCatRoute.js";
+import brandCategoryRouter from "./routes/brandCatRouter.js";
 import cors from "cors";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
@@ -30,7 +31,8 @@ app.use("/api/user", authRouter);
 app.use("/api/product", productRouter);
 app.use("/api/blog", blogRouter);
 app.use("/api/category", categoryRouter);
-app.use("/api/blogcategory", blogCategoryRouter)
+app.use("/api/blogcategory", blogCategoryRouter);
+app.use("/api/brandcategory", brandCategoryRouter);
 
 app.use(notFound);
 app.use(errorHandler);

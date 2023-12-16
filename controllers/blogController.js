@@ -108,7 +108,7 @@ export const liketheBlog = asyncHandler(async (req, res) => {
 });
 
 export const disliketheBlog = asyncHandler(async (req, res) => {
-  console.log(req.body);
+
   const { blogId } = req.body;
   // Find the blog which you want to be liked
   const blog = await Blog.findById(blogId);
