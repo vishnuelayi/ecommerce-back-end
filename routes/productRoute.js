@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  addToWishList,
   createProduct,
   deleteProduct,
   getAllProducts,
@@ -11,6 +12,7 @@ import { authMiddleware, isAdmin } from "../middlewares/authMiddleware.js";
 const router = express.Router();
 
 router.post("/", authMiddleware, isAdmin, createProduct);
+router.put("/addtowishlist/", authMiddleware, addToWishList);
 router.put("/:id", authMiddleware, isAdmin, updateProduct);
 router.delete("/:id", authMiddleware, isAdmin, deleteProduct);
 router.get("/:id", getAproduct);
