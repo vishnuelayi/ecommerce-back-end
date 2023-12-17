@@ -146,23 +146,13 @@ export const rating = asyncHandler(async (req, res) => {
           ratings: { $elemMatch: isAlreadyRated },
         },
         {
-          $set: { "ratings.$.star": star },
+          $set: { "ratings.$.star": star, "ratings.$.comment": comment },
         },
         {
           new: true,
         }
       );
-      await Product.updateOne(
-        {
-          ratings: { $elemMatch: isAlreadyRated },
-        },
-        {
-          $set: { "ratings.$.comment": comment },
-        },
-        {
-          new: true,
-        }
-      )
+     
     } else {
       await Product.findByIdAndUpdate(
         prodId,
