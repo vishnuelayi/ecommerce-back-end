@@ -2,6 +2,7 @@ import Product from "../models/productModel.js";
 import asyncHandler from "express-async-handler";
 import slugify from "slugify";
 import User from "../models/userModel.js";
+import { cloudinaryUploadImg } from "../utils/cloudinary.js";
 
 export const createProduct = asyncHandler(async (req, res) => {
   try {
@@ -152,7 +153,6 @@ export const rating = asyncHandler(async (req, res) => {
           new: true,
         }
       );
-     
     } else {
       await Product.findByIdAndUpdate(
         prodId,
@@ -161,7 +161,7 @@ export const rating = asyncHandler(async (req, res) => {
             ratings: {
               star: star,
               postedBy: _id,
-              comment:comment,
+              comment: comment,
             },
           },
         },
@@ -183,6 +183,28 @@ export const rating = asyncHandler(async (req, res) => {
       { new: true }
     );
     res.json(finalProduct);
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+export const uploadImages = asyncHandler(async (req, res) => {
+  console.log(req.files);
+  const { id } = req.params;
+  try {
+    const uploader = (path) => cloudinaryUploadImg(path, "images");
+    const urls = [];
+    const files = req.files;
+    for (const file of files) {
+      const { path } = file;
+      const newPath = await uploader(path);
+      urls.push(newPath);
+    }
+    const findProduct = await Product.findByIdAndUpdate(id,
+    {images:urls.map((file) => {
+      return file;
+    })}, {new:true})
+    res.json(findProduct);
   } catch (error) {
     throw new Error(error);
   }
