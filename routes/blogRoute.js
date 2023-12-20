@@ -8,11 +8,15 @@ import {
   getBlog,
   liketheBlog,
   updateBlog,
+  uploadImages
 } from "../controllers/blogController.js";
+import { uploadPhoto, blogImgResize} from "../controllers/cloudinaryCtrlr.js";
+
 
 const router = express.Router();
 
 router.post("/", authMiddleware, isAdmin, createBlog);
+router.put("/upload/:id", authMiddleware, isAdmin, uploadPhoto.array('images', 10),blogImgResize, uploadImages)
 router.put("/likes", authMiddleware, liketheBlog);
 router.put("/dislikes", authMiddleware, disliketheBlog);
 router.put("/:id", authMiddleware, isAdmin, updateBlog);
