@@ -13,6 +13,7 @@ import {
   saveAddress,
   updatePassword,
   updatedUser,
+  userCart,
   viewWishlist,
 } from "../controllers/userController.js";
 import {
@@ -29,12 +30,14 @@ router.post("/forgot-password-token", forgotPasswordToken);
 router.put("/reset-password/:token", resetPassword);
 router.post("/login", loginCntrlr);
 router.post("/admin-login", adminLogin);
+
 router.put("/password", authMiddleware, updatePassword);
 router.get("/refresh", handleRefreshToken);
 router.get("/wishlist", authMiddleware, viewWishlist);
 router.get("/logout", logout);
 router.get("/all-users", getAllUsers);
 router.get("/:id", authMiddleware, isAdmin, getOneUser);
+router.post("/cart", authMiddleware, userCart);
 
 router.delete("/:id", deleteOneUser);
 router.put("/user-edit", authMiddleware, updatedUser);

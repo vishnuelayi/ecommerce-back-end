@@ -1,11 +1,14 @@
 import generateToken from "../config/jsonWebToken.js";
 import User from "../models/userModel.js";
+import Product from "../models/productModel.js";
 import asyncHandler from "express-async-handler";
 import { validateMongoID } from "../utils/validateMongoId.js";
 import generateRefreshToken from "../config/refreshToken.js";
 import jwt from "jsonwebtoken";
 import sendMail from "./emailController.js";
 import crypto from "crypto";
+import Cart from "../models/cartModel.js";
+import e from "express";
 
 //register a new user
 export const createUser = asyncHandler(async (req, res) => {
@@ -258,6 +261,60 @@ export const saveAddress = asyncHandler(async (req, res) => {
       { new: true }
     );
     res.json(updateUser);
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+export const userCart = asyncHandler(async (req, res) => {
+  const { cart } = req.body;
+  const { _id } = req.user;
+  validateMongoID(_id);
+  try {
+    let products = [];
+    const user = await User.findById(_id);
+    //check if user already product in cart
+    await Cart.findOne({ orderby: user._id }).then(user => {
+      if(user)
+      {
+        user.deleteOne;
+      }
+      
+    })
+    let cartTotal = 0;
+for (let i = 0; i < cart.length; i++) {
+  const product = cart[i];
+  const getPrice = await Product.findById(product._id).select("price").exec();
+
+  // Check if getPrice is null before accessing its properties
+  if (getPrice) {
+    cartTotal += getPrice.price * product.count;
+
+    let object = {
+      product: product._id,
+      count: product.count,
+      color: product.color,
+      price: getPrice.price,
+    };
+    products.push(object);
+  } else {
+    // Handle the case where the product with the given _id is not found
+    console.error(`Product not found for _id: ${product._id}`);
+    // You might want to decide what to do in this case, e.g., skip the product or return an error response
+  }
+}
+
+
+    
+    for (let i = 0; i < products.length; i++) {
+      cartTotal = cartTotal + products[i].price * products[i].count;
+    }
+    let newCart = await new Cart({
+      products,
+      cartTotal,
+      orderby: user._id,
+    }).save();
+    res.json(newCart);
   } catch (error) {
     throw new Error(error);
   }
