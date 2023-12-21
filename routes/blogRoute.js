@@ -10,7 +10,7 @@ import {
   updateBlog,
   uploadImages
 } from "../controllers/blogController.js";
-import { uploadPhoto, blogImgResize} from "../controllers/cloudinaryCtrlr.js";
+import { uploadPhoto, blogImgResize} from "../middlewares/uploadImage.js";
 
 
 const router = express.Router();

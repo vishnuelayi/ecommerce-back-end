@@ -10,7 +10,7 @@ import {
   uploadImages,
 } from "../controllers/productController.js";
 import { authMiddleware, isAdmin } from "../middlewares/authMiddleware.js";
-import { productImgResize, uploadPhoto } from "../controllers/cloudinaryCtrlr.js";
+import { productImgResize, uploadPhoto } from "../middlewares/uploadImage.js";
 
 const router = express.Router();
 

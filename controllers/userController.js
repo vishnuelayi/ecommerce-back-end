@@ -19,7 +19,7 @@ export const createUser = asyncHandler(async (req, res) => {
   }
 });
 
-//login authentication
+//User login authentication
 export const loginCntrlr = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
@@ -44,6 +44,41 @@ export const loginCntrlr = asyncHandler(async (req, res) => {
       email: findUser?.email,
       mobile: findUser?.mobile,
       token: generateToken(findUser?._id),
+    });
+  } else {
+    throw new Error("Invalid Credentials !");
+  }
+});
+
+//admin login authentication
+export const adminLogin = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+
+  const findAdmin = await User.findOne({ email });
+
+  if (findAdmin.role !== "admin") {
+    throw new Error("You are not Authorized !");
+  }
+
+  if (findAdmin && (await findAdmin.isPasswordMatched(password))) {
+    const refreshToken = await generateRefreshToken(findAdmin._id);
+    const updateAdmin = await User.findByIdAndUpdate(
+      findAdmin._id,
+      { refreshToken: refreshToken },
+      { new: true }
+    );
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      maxAge: 72 * 60 * 60 * 1000,
+    });
+
+    res.json({
+      _id: findAdmin?._id,
+      firstname: findAdmin?.firstname,
+      lastname: findAdmin?.lastname,
+      email: findAdmin?.email,
+      mobile: findAdmin?.mobile,
+      token: generateToken(findAdmin?._id),
     });
   } else {
     throw new Error("Invalid Credentials !");
@@ -202,4 +237,28 @@ export const resetPassword = asyncHandler(async (req, res) => {
   user.passwordResetExpires = undefined;
   await user.save();
   res.json(user);
+});
+
+export const viewWishlist = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  try {
+    const findUser = await User.findById(_id).populate("whishlist");
+    res.json(findUser);
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+export const saveAddress = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  try {
+    const updateUser = await User.findByIdAndUpdate(
+      _id,
+      { address: req?.body?.address },
+      { new: true }
+    );
+    res.json(updateUser);
+  } catch (error) {
+    throw new Error(error);
+  }
 });
