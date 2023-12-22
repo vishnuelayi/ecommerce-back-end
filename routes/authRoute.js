@@ -1,10 +1,13 @@
 import express from "express";
 import {
   adminLogin,
+  createCart,
   createUser,
   deleteOneUser,
+  emptyCart,
   forgotPasswordToken,
   getAllUsers,
+  getCart,
   getOneUser,
   handleRefreshToken,
   loginCntrlr,
@@ -13,7 +16,6 @@ import {
   saveAddress,
   updatePassword,
   updatedUser,
-  userCart,
   viewWishlist,
 } from "../controllers/userController.js";
 import {
@@ -25,24 +27,31 @@ import {
 
 const router = express.Router();
 
+//User Registration and Authentication
 router.post("/register", createUser);
-router.post("/forgot-password-token", forgotPasswordToken);
-router.put("/reset-password/:token", resetPassword);
 router.post("/login", loginCntrlr);
 router.post("/admin-login", adminLogin);
+router.post("/forgot-password-token", forgotPasswordToken);
+router.put("/reset-password/:token", resetPassword);
 
-router.put("/password", authMiddleware, updatePassword);
+//User Management and Authentication Routes
 router.get("/refresh", handleRefreshToken);
-router.get("/wishlist", authMiddleware, viewWishlist);
 router.get("/logout", logout);
-router.get("/all-users", getAllUsers);
-router.get("/:id", authMiddleware, isAdmin, getOneUser);
-router.post("/cart", authMiddleware, userCart);
+router.put("/password", authMiddleware, updatePassword);
+router.get("/wishlist", authMiddleware, viewWishlist);
+router.get("/cart", authMiddleware, getCart);
+router.post("/cart", authMiddleware, createCart);
+router.delete("/cart", authMiddleware, emptyCart)
 
-router.delete("/:id", deleteOneUser);
+//Admin Only Routes
+router.get("/all-users", authMiddleware, isAdmin, getAllUsers);
+router.get("/:id", authMiddleware, isAdmin, getOneUser);
+
+//User Management Routes
 router.put("/user-edit", authMiddleware, updatedUser);
 router.put("/save-address", authMiddleware, saveAddress);
 router.put("/block-user/:id", authMiddleware, isAdmin, blockUser);
 router.put("/unblock-user/:id", authMiddleware, isAdmin, unBlockUser);
+router.delete("/:id", deleteOneUser);
 
 export default router;

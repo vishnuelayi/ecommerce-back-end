@@ -9,6 +9,7 @@ import sendMail from "./emailController.js";
 import crypto from "crypto";
 import Cart from "../models/cartModel.js";
 import e from "express";
+import { log } from "console";
 
 //register a new user
 export const createUser = asyncHandler(async (req, res) => {
@@ -266,55 +267,87 @@ export const saveAddress = asyncHandler(async (req, res) => {
   }
 });
 
-export const userCart = asyncHandler(async (req, res) => {
-  const { cart } = req.body;
+export const createCart = async (req, res) => {
+  const sampleProducts = req.body.cart;
+  const sampleUserId = req.user._id; // Replace with a valid User ID
+  
+  try {
+    // Fetch user to ensure it exists
+    const user = await User.findById(sampleUserId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Fetch products to ensure they exist
+    const products = await Promise.all(
+      sampleProducts.map(async (item) => {
+        const product = await Product.findById(item.product);
+        if (!product) {
+          return res
+            .status(404)
+            .json({ error: `Product not found for ID: ${item.product}` });
+        }
+        return {
+          product: item.product,
+          count: item.count,
+          color: item.color,
+          price: item.price,
+        };
+      })
+    );
+
+    // Calculate cartTotal and totalAfterDiscount based on the products
+    const cartTotal = products.reduce(
+      (total, product) => total + product.price * product.count,
+      0
+    );
+    const totalAfterDiscount = calculateDiscount(cartTotal); // Implement your discount logic
+
+    // Create the cart
+    const newCart = new Cart({
+      products,
+      cartTotal,
+      totalAfterDiscount,
+      orderby: sampleUserId,
+    });
+
+    // Save the cart to the database
+    await newCart.save();
+
+    // Respond with the created cart
+    res.status(201).json(newCart);
+  } catch (error) {
+    console.error("Error creating cart:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+// Example discount calculation function (replace with your own logic)
+const calculateDiscount = (cartTotal) => {
+  // Sample discount logic (50% off)
+  return cartTotal * 0.5;
+};
+
+export const getCart = asyncHandler(async (req, res) => {
   const { _id } = req.user;
   validateMongoID(_id);
   try {
-    let products = [];
-    const user = await User.findById(_id);
-    //check if user already product in cart
-    await Cart.findOne({ orderby: user._id }).then(user => {
-      if(user)
-      {
-        user.deleteOne;
-      }
-      
-    })
-    let cartTotal = 0;
-for (let i = 0; i < cart.length; i++) {
-  const product = cart[i];
-  const getPrice = await Product.findById(product._id).select("price").exec();
-
-  // Check if getPrice is null before accessing its properties
-  if (getPrice) {
-    cartTotal += getPrice.price * product.count;
-
-    let object = {
-      product: product._id,
-      count: product.count,
-      color: product.color,
-      price: getPrice.price,
-    };
-    products.push(object);
-  } else {
-    // Handle the case where the product with the given _id is not found
-    console.error(`Product not found for _id: ${product._id}`);
-    // You might want to decide what to do in this case, e.g., skip the product or return an error response
+    const cart = await Cart.findOne({ orderby: _id }).populate(
+      "products.product"
+    );
+    res.json(cart);
+  } catch (error) {
+    throw new Error(error);
   }
-}
+});
 
+export const emptyCart = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
 
-    
-    for (let i = 0; i < products.length; i++) {
-      cartTotal = cartTotal + products[i].price * products[i].count;
-    }
-    let newCart = await new Cart({
-      products,
-      cartTotal,
-      orderby: user._id,
-    }).save();
-    res.json(newCart);
+  try {
+    // const user = await User.findById(_id);
+    const cart = await Cart.findOneAndDelete({ orderby: _id });
+    res.json(cart);
   } catch (error) {
     throw new Error(error);
   }
