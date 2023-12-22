@@ -1,6 +1,7 @@
 import express from "express";
 import {
   adminLogin,
+  applyCoupon,
   createCart,
   createUser,
   deleteOneUser,
@@ -41,7 +42,8 @@ router.put("/password", authMiddleware, updatePassword);
 router.get("/wishlist", authMiddleware, viewWishlist);
 router.get("/cart", authMiddleware, getCart);
 router.post("/cart", authMiddleware, createCart);
-router.delete("/cart", authMiddleware, emptyCart)
+router.delete("/cart", authMiddleware, emptyCart);
+router.post("/cart/apply-coupon", authMiddleware, applyCoupon);
 
 //Admin Only Routes
 router.get("/all-users", authMiddleware, isAdmin, getAllUsers);

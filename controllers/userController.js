@@ -1,6 +1,7 @@
 import generateToken from "../config/jsonWebToken.js";
 import User from "../models/userModel.js";
 import Product from "../models/productModel.js";
+import Coupon from "../models/couponModel.js";
 import asyncHandler from "express-async-handler";
 import { validateMongoID } from "../utils/validateMongoId.js";
 import generateRefreshToken from "../config/refreshToken.js";
@@ -8,8 +9,6 @@ import jwt from "jsonwebtoken";
 import sendMail from "./emailController.js";
 import crypto from "crypto";
 import Cart from "../models/cartModel.js";
-import e from "express";
-import { log } from "console";
 
 //register a new user
 export const createUser = asyncHandler(async (req, res) => {
@@ -270,7 +269,7 @@ export const saveAddress = asyncHandler(async (req, res) => {
 export const createCart = async (req, res) => {
   const sampleProducts = req.body.cart;
   const sampleUserId = req.user._id; // Replace with a valid User ID
-  
+
   try {
     // Fetch user to ensure it exists
     const user = await User.findById(sampleUserId);
@@ -301,13 +300,11 @@ export const createCart = async (req, res) => {
       (total, product) => total + product.price * product.count,
       0
     );
-    const totalAfterDiscount = calculateDiscount(cartTotal); // Implement your discount logic
 
     // Create the cart
     const newCart = new Cart({
       products,
       cartTotal,
-      totalAfterDiscount,
       orderby: sampleUserId,
     });
 
@@ -320,12 +317,6 @@ export const createCart = async (req, res) => {
     console.error("Error creating cart:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
-};
-
-// Example discount calculation function (replace with your own logic)
-const calculateDiscount = (cartTotal) => {
-  // Sample discount logic (50% off)
-  return cartTotal * 0.5;
 };
 
 export const getCart = asyncHandler(async (req, res) => {
@@ -348,6 +339,33 @@ export const emptyCart = asyncHandler(async (req, res) => {
     // const user = await User.findById(_id);
     const cart = await Cart.findOneAndDelete({ orderby: _id });
     res.json(cart);
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+export const applyCoupon = asyncHandler(async (req, res) => {
+  const { coupon } = req.body;
+  const { _id } = req.user;
+  try {
+    const validCoupon = await Coupon.findOne({ name: coupon });
+    if (validCoupon === null) {
+      throw new Error("Invalid Coupon");
+    }
+
+    let { cartTotal } = await Cart.findOne({ orderby: _id }).populate(
+      "products.product"
+    );
+    let totalAfterDiscount = (
+      cartTotal -
+      (cartTotal + validCoupon.discount) / 100
+    ).toFixed(2);
+    await Cart.findOneAndUpdate(
+      { orderby: _id },
+      { totalAfterDiscount },
+      { new: true }
+    );
+    res.json(totalAfterDiscount);
   } catch (error) {
     throw new Error(error);
   }
