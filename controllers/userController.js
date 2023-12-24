@@ -1,5 +1,6 @@
 import generateToken from "../config/jsonWebToken.js";
 import User from "../models/userModel.js";
+import Order from "../models/orderModel.js";
 import Product from "../models/productModel.js";
 import Coupon from "../models/couponModel.js";
 import asyncHandler from "express-async-handler";
@@ -9,6 +10,7 @@ import jwt from "jsonwebtoken";
 import sendMail from "./emailController.js";
 import crypto from "crypto";
 import Cart from "../models/cartModel.js";
+import uniqid from "uniqid";
 
 //register a new user
 export const createUser = asyncHandler(async (req, res) => {
@@ -370,3 +372,75 @@ export const applyCoupon = asyncHandler(async (req, res) => {
     throw new Error(error);
   }
 });
+
+export const createOrder = asyncHandler(async (req, res) => {
+  const { COD, couponApplied } = req.body;
+  const { _id } = req.user;
+  validateMongoID(_id);
+
+  try {
+    if (!COD) throw new Error("Create cash order failed");
+    const user = await User.findById(_id);
+    let userCart = await Cart.findOne({ orderby: user._id });
+    let finalAmout = 0;
+    if (couponApplied && userCart.totalAfterDiscount) {
+      finalAmout = userCart.totalAfterDiscount;
+    } else {
+      finalAmout = userCart.cartTotal;
+    }
+
+    await new Order({
+      products: userCart.products,
+      paymentIntent: {
+        id: uniqid(),
+        method: "COD",
+        amount: finalAmout,
+        status: "Cash on Delivery",
+        created: Date.now(),
+        currency: "usd",
+      },
+      orderby: user._id,
+      orderStatus: "Cash on Delivery",
+    }).save();
+    let update = userCart.products.map((item) => {
+      return {
+        updateOne: {
+          filter: { _id: item.product._id },
+          update: { $inc: { quantity: -item.count, sold: +item.count } },
+        },
+      };
+    });
+    await Product.bulkWrite(update, {});
+    res.json({ message: "success" });
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+export const getOrders = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  validateMongoID(_id);
+  try {
+    const getOrder = await Order.findOne({ orderby: _id });
+    res.json(getOrder);
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+
+export const updateOrderStatus = asyncHandler(async(req, res) => {
+  const {status} = req.body;
+  const {id} = req.params;
+  validateMongoID(id)
+  try{
+const updatedStatus = await Order.findByIdAndUpdate(id, {orderstatus:status, paymentIntent:{
+  status:status
+}}, {new:true})
+res.json(updatedStatus);
+  }
+  catch(error)
+  {
+    throw new Error(error);
+  }
+})

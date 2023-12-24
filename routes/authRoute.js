@@ -3,6 +3,7 @@ import {
   adminLogin,
   applyCoupon,
   createCart,
+  createOrder,
   createUser,
   deleteOneUser,
   emptyCart,
@@ -10,11 +11,13 @@ import {
   getAllUsers,
   getCart,
   getOneUser,
+  getOrders,
   handleRefreshToken,
   loginCntrlr,
   logout,
   resetPassword,
   saveAddress,
+  updateOrderStatus,
   updatePassword,
   updatedUser,
   viewWishlist,
@@ -44,10 +47,13 @@ router.get("/cart", authMiddleware, getCart);
 router.post("/cart", authMiddleware, createCart);
 router.delete("/cart", authMiddleware, emptyCart);
 router.post("/cart/apply-coupon", authMiddleware, applyCoupon);
+router.post("/cart/create-cart", authMiddleware, createOrder);
+router.get("/get-orders", authMiddleware, getOrders);
 
 //Admin Only Routes
 router.get("/all-users", authMiddleware, isAdmin, getAllUsers);
 router.get("/:id", authMiddleware, isAdmin, getOneUser);
+router.put("/oders/status/:id", authMiddleware, isAdmin, updateOrderStatus);
 
 //User Management Routes
 router.put("/user-edit", authMiddleware, updatedUser);
