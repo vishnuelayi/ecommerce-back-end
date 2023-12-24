@@ -3,7 +3,7 @@ import asyncHandler from "express-async-handler";
 import slugify from "slugify";
 import User from "../models/userModel.js";
 import { cloudinaryUploadImg } from "../utils/cloudinary.js";
-import fs from "fs"
+import fs from "fs";
 
 export const createProduct = asyncHandler(async (req, res) => {
   try {
@@ -203,10 +203,15 @@ export const uploadImages = asyncHandler(async (req, res) => {
       // fs.unlinkSync(path);
     }
 
-    const findProduct = await Product.findByIdAndUpdate(id,
-    {images:urls.map((file) => {
-      return file;
-    })}, {new:true})
+    const findProduct = await Product.findByIdAndUpdate(
+      id,
+      {
+        images: urls.map((file) => {
+          return file;
+        }),
+      },
+      { new: true }
+    );
     res.json(findProduct);
   } catch (error) {
     throw new Error(error);

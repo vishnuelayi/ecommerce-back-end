@@ -50,7 +50,7 @@ export const blockUser = asyncHandler(async (req, res) => {
       { isBlocked: true },
       { new: true }
     );
-    res.json({"Message": "User is blocked"});
+    res.json({ Message: "User is blocked" });
   } catch (error) {
     throw error;
   }
@@ -64,7 +64,7 @@ export const unBlockUser = asyncHandler(async (req, res) => {
       { isBlocked: false },
       { new: true }
     );
-    res.json({"Message": "User is Un-blocked"});
+    res.json({ Message: "User is Un-blocked" });
   } catch (error) {
     throw error;
   }

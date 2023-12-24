@@ -109,7 +109,6 @@ export const liketheBlog = asyncHandler(async (req, res) => {
 });
 
 export const disliketheBlog = asyncHandler(async (req, res) => {
-
   const { blogId } = req.body;
   // Find the blog which you want to be liked
   const blog = await Blog.findById(blogId);
@@ -157,7 +156,7 @@ export const disliketheBlog = asyncHandler(async (req, res) => {
 
 export const uploadImages = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  validateMongoID(id)
+  validateMongoID(id);
   try {
     const uploader = (path) => cloudinaryUploadImg(path, "images");
     const urls = [];
@@ -184,4 +183,3 @@ export const uploadImages = asyncHandler(async (req, res) => {
     throw new Error(error);
   }
 });
-

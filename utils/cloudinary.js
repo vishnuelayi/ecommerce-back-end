@@ -1,6 +1,5 @@
 import { v2 as cloudinary } from "cloudinary";
 
-
 cloudinary.config({
   cloud_name: "dhu7v0zn0",
   api_key: "994592536578543",
@@ -8,8 +7,11 @@ cloudinary.config({
 });
 
 export const cloudinaryUploadImg = (filePath, folder) => {
-    return new Promise((resolve, reject) => {
-      cloudinary.uploader.upload(filePath, { folder: folder }, (error, result) => {
+  return new Promise((resolve, reject) => {
+    cloudinary.uploader.upload(
+      filePath,
+      { folder: folder },
+      (error, result) => {
         if (error) {
           reject(error);
         } else {
@@ -17,9 +19,10 @@ export const cloudinaryUploadImg = (filePath, folder) => {
           if (result && result.secure_url) {
             resolve(result.secure_url);
           } else {
-            reject(new Error('Secure URL not found in Cloudinary response.'));
+            reject(new Error("Secure URL not found in Cloudinary response."));
           }
         }
-      });
-    });
-  };
+      }
+    );
+  });
+};

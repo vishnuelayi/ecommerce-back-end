@@ -428,19 +428,23 @@ export const getOrders = asyncHandler(async (req, res) => {
   }
 });
 
-
-export const updateOrderStatus = asyncHandler(async(req, res) => {
-  const {status} = req.body;
-  const {id} = req.params;
-  validateMongoID(id)
-  try{
-const updatedStatus = await Order.findByIdAndUpdate(id, {orderstatus:status, paymentIntent:{
-  status:status
-}}, {new:true})
-res.json(updatedStatus);
-  }
-  catch(error)
-  {
+export const updateOrderStatus = asyncHandler(async (req, res) => {
+  const { status } = req.body;
+  const { id } = req.params;
+  validateMongoID(id);
+  try {
+    const updatedStatus = await Order.findByIdAndUpdate(
+      id,
+      {
+        orderstatus: status,
+        paymentIntent: {
+          status: status,
+        },
+      },
+      { new: true }
+    );
+    res.json(updatedStatus);
+  } catch (error) {
     throw new Error(error);
   }
-})
+});
