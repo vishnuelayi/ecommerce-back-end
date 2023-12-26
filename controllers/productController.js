@@ -2,7 +2,10 @@ import Product from "../models/productModel.js";
 import asyncHandler from "express-async-handler";
 import slugify from "slugify";
 import User from "../models/userModel.js";
-import { cloudinaryUploadImg } from "../utils/cloudinary.js";
+import {
+  cloudinaryUploadImg,
+  cloudinaryDeleteImg,
+} from "../utils/cloudinary.js";
 import fs from "fs";
 
 export const createProduct = asyncHandler(async (req, res) => {
@@ -190,8 +193,6 @@ export const rating = asyncHandler(async (req, res) => {
 });
 
 export const uploadImages = asyncHandler(async (req, res) => {
-  console.log(req.files);
-  const { id } = req.params;
   try {
     const uploader = (path) => cloudinaryUploadImg(path, "images");
     const urls = [];
@@ -202,17 +203,20 @@ export const uploadImages = asyncHandler(async (req, res) => {
       urls.push(newPath);
       // fs.unlinkSync(path);
     }
+    const images = urls.map((file) => {
+      return file;
+    });
+    res.json(images);
+  } catch (error) {
+    throw new Error(error);
+  }
+});
 
-    const findProduct = await Product.findByIdAndUpdate(
-      id,
-      {
-        images: urls.map((file) => {
-          return file;
-        }),
-      },
-      { new: true }
-    );
-    res.json(findProduct);
+export const deleteImages = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  try {
+    const deleted = cloudinaryDeleteImg(id, "images");
+    res.json({ message: "Image deleted successfully" });
   } catch (error) {
     throw new Error(error);
   }
