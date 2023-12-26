@@ -8,6 +8,7 @@ import categoryRouter from "./routes/categoryRoute.js";
 import blogCategoryRouter from "./routes/blogCatRoute.js";
 import brandCategoryRouter from "./routes/brandCatRouter.js";
 import couponRouter from "./routes/couponRouter.js";
+import colorRouter from "./routes/colorRoute.js";
 import cors from "cors";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
@@ -35,6 +36,7 @@ app.use("/api/category", categoryRouter);
 app.use("/api/blogcategory", blogCategoryRouter);
 app.use("/api/brandcategory", brandCategoryRouter);
 app.use("/api/coupon", couponRouter);
+app.use("/api/color", colorRouter);
 
 app.use(notFound);
 app.use(errorHandler);
