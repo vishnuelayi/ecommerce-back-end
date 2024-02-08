@@ -421,7 +421,20 @@ export const getOrders = asyncHandler(async (req, res) => {
   const { _id } = req.user;
   validateMongoID(_id);
   try {
-    const getOrder = await Order.findOne({ orderby: _id });
+    const getOrder = await Order.findOne({ orderby: _id }).populate(
+      "products.product"
+    ).populate("orderby");
+    res.json(getOrder);
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+export const getAllOrders = asyncHandler(async (req, res) => {
+  try {
+    const getOrder = await Order.find().populate("products.product").populate(
+      "orderby"
+    );
     res.json(getOrder);
   } catch (error) {
     throw new Error(error);

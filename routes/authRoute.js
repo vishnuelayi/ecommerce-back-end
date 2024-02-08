@@ -12,6 +12,7 @@ import {
   getCart,
   getOneUser,
   getOrders,
+  getAllOrders,
   handleRefreshToken,
   loginCntrlr,
   logout,
@@ -51,6 +52,7 @@ router.post("/cart/create-cart", authMiddleware, createOrder);
 router.get("/get-orders", authMiddleware, getOrders);
 
 //Admin Only Routes
+router.get("/get-all-orders", authMiddleware, isAdmin, getAllOrders);
 router.get("/all-users", authMiddleware, isAdmin, getAllUsers);
 router.get("/:id", authMiddleware, isAdmin, getOneUser);
 router.put("/oders/status/:id", authMiddleware, isAdmin, updateOrderStatus);

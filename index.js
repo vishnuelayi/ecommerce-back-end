@@ -10,6 +10,7 @@ import brandCategoryRouter from "./routes/brandCatRouter.js";
 import couponRouter from "./routes/couponRouter.js";
 import colorRouter from "./routes/colorRoute.js";
 import enquiryRouter from "./routes/enqRoute.js";
+import uploadRouter from "./routes/uploadRoute.js";
 import cors from "cors";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
@@ -32,6 +33,7 @@ app.use(cookieParser());
 
 app.use("/api/user", authRouter);
 app.use("/api/product", productRouter);
+app.use("/api/upload", uploadRouter);
 app.use("/api/blog", blogRouter);
 app.use("/api/category", categoryRouter);
 app.use("/api/blogcategory", blogCategoryRouter);
