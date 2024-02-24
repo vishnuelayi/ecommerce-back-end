@@ -248,7 +248,7 @@ export const viewWishlist = asyncHandler(async (req, res) => {
   const { _id } = req.user;
   try {
     const findUser = await User.findById(_id).populate("whishlist");
-    res.json(findUser);
+    res.json(findUser.whishlist);
   } catch (error) {
     throw new Error(error);
   }
@@ -269,52 +269,29 @@ export const saveAddress = asyncHandler(async (req, res) => {
 });
 
 export const createCart = async (req, res) => {
-  const sampleProducts = req.body.cart;
-  const sampleUserId = req.user._id; // Replace with a valid User ID
+  const {productId, color, quantity,price} = req.body;
+  const {_id} = req.user; 
 
   try {
     // Fetch user to ensure it exists
-    const user = await User.findById(sampleUserId);
+    const user = await User.findById(_id);
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
 
-    // Fetch products to ensure they exist
-    const products = await Promise.all(
-      sampleProducts.map(async (item) => {
-        const product = await Product.findById(item.product);
-        if (!product) {
-          return res
-            .status(404)
-            .json({ error: `Product not found for ID: ${item.product}` });
-        }
-        return {
-          product: item.product,
-          count: item.count,
-          color: item.color,
-          price: item.price,
-        };
-      })
-    );
-
-    // Calculate cartTotal and totalAfterDiscount based on the products
-    const cartTotal = products.reduce(
-      (total, product) => total + product.price * product.count,
-      0
-    );
-
-    // Create the cart
-    const newCart = new Cart({
-      products,
-      cartTotal,
-      orderby: sampleUserId,
+ const cart = new Cart({
+    userId:_id,
+    productId:productId,
+    color:color,
+    quantity:quantity,
+    price:price
     });
 
     // Save the cart to the database
-    await newCart.save();
+    await cart.save();
 
     // Respond with the created cart
-    res.status(201).json(newCart);
+    res.status(201).json(cart);
   } catch (error) {
     console.error("Error creating cart:", error);
     res.status(500).json({ error: "Internal Server Error" });
