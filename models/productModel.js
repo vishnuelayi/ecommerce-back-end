@@ -40,10 +40,10 @@ const productSchema = mongoose.Schema(
     images: {
       type: Array,
     },
-      tag:{
-        type:String,
-      },
-    color: [],
+    tag: {
+      type: String,
+    },
+    color: [{ type: mongoose.Schema.Types.ObjectId, ref: "Color" }],
     ratings: [
       {
         star: Number,
