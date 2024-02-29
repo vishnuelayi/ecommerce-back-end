@@ -2,34 +2,90 @@ import mongoose from "mongoose";
 
 const orderSchema = new mongoose.Schema(
   {
-    products: [
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    shippingInfo: {
+      firstname: {
+        type: String,
+        required: true,
+      },
+      lastname: {
+        type: String,
+        required: true,
+      },
+      address: {
+        type: String,
+        required: true,
+      },
+      city: {
+        type: String,
+        required: true,
+      },
+      state: {
+        type: String,
+        required: true,
+      },
+      pin: {
+        type: Number,
+        required: true,
+      },
+      others: {
+        type: String,
+      },
+    },
+    paymentInfo: {
+      razorpayOrderId: {
+        type: String,
+        required: true,
+      },
+      razorpayPaymentId: {
+        type: String,
+        required: true,
+      },
+    },
+    orderItems: [
       {
         product: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "Product",
+          required: true,
         },
-        count: Number,
-        color: String,
+        color: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Color",
+          required: true,
+        },
+        quantity: {
+          type: Number,
+          required: true,
+        },
+        price: {
+          type: Number,
+          required: true,
+        },
       },
     ],
-    paymentIntent: {},
-    orderstatus: {
-      type: String,
-      default: "Not Processed",
-      enum: [
-        "Not Processed",
-        "Cash on Delivery",
-        "Processing",
-        "Despatched",
-        "Cancelled",
-        "Delivered",
-      ],
+    paidAt: {
+      type: Date,
+      default: Date.now(),
     },
-    orderby: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+    totalPrice: {
+      type: Number,
+      required: true,
+    },
+    totalPriceAfterDiscount: {
+      type: Number,
+      required: true,
+    },
+    orderStatus: {
+      type: String,
+      default: "Ordered",
     },
   },
+
   { timestamps: true }
 );
 

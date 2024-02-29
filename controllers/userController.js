@@ -269,8 +269,8 @@ export const saveAddress = asyncHandler(async (req, res) => {
 });
 
 export const createCart = async (req, res) => {
-  const {productId, color, quantity,price} = req.body;
-  const {_id} = req.user; 
+  const { productId, color, quantity, price } = req.body;
+  const { _id } = req.user;
 
   try {
     // Fetch user to ensure it exists
@@ -279,12 +279,12 @@ export const createCart = async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
- const cart = new Cart({
-    userId:_id,
-    productId:productId,
-    color:color,
-    quantity:quantity,
-    price:price
+    const cart = new Cart({
+      userId: _id,
+      productId: productId,
+      color: color,
+      quantity: quantity,
+      price: price,
     });
 
     // Save the cart to the database
@@ -302,17 +302,43 @@ export const getCart = asyncHandler(async (req, res) => {
   const { _id } = req.user;
 
   try {
-    const cart = await Cart.find({ userId: _id }).populate("productId").populate("color")
-      
-
+    const cart = await Cart.find({ userId: _id })
+      .populate("productId")
+      .populate("color");
 
     res.json(cart);
-
   } catch (error) {
     throw new Error(error);
   }
 });
 
+export const deleteProductCart = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+  const { prodId } = req.params;
+
+  try {
+    const cart = await Cart.deleteOne({ userId: _id, _id: prodId });
+    res.json(cart);
+  } catch (error) {
+    throw new Error(error);
+  }
+});
+
+export const updateQuantity = asyncHandler(async (req, res) => {
+  const { _id } = req.user;
+
+  const { cartItemId, newQuantity } = req.params;
+
+  try {
+    const cartItem = await Cart.findOne({ userId: _id, _id: cartItemId });
+    // console.log(cartItem);
+    cartItem.quantity = newQuantity;
+    cartItem.save();
+    res.json(cartItem);
+  } catch (error) {
+    throw new Error(error);
+  }
+});
 
 export const emptyCart = asyncHandler(async (req, res) => {
   const { _id } = req.user;
@@ -354,44 +380,26 @@ export const applyCoupon = asyncHandler(async (req, res) => {
 });
 
 export const createOrder = asyncHandler(async (req, res) => {
-  const { COD, couponApplied } = req.body;
   const { _id } = req.user;
-  validateMongoID(_id);
-
+  const {
+    shippingInfo,
+    paymentInfo,
+    orderItems,
+    paidAt,
+    totalPrice,
+    totalPriceAfterDiscount,
+  } = req.body;
   try {
-    if (!COD) throw new Error("Create cash order failed");
-    const user = await User.findById(_id);
-    let userCart = await Cart.findOne({ orderby: user._id });
-    let finalAmout = 0;
-    if (couponApplied && userCart.totalAfterDiscount) {
-      finalAmout = userCart.totalAfterDiscount;
-    } else {
-      finalAmout = userCart.cartTotal;
-    }
-
-    await new Order({
-      products: userCart.products,
-      paymentIntent: {
-        id: uniqid(),
-        method: "COD",
-        amount: finalAmout,
-        status: "Cash on Delivery",
-        created: Date.now(),
-        currency: "usd",
-      },
-      orderby: user._id,
-      orderStatus: "Cash on Delivery",
-    }).save();
-    let update = userCart.products.map((item) => {
-      return {
-        updateOne: {
-          filter: { _id: item.product._id },
-          update: { $inc: { quantity: -item.count, sold: +item.count } },
-        },
-      };
+    const newOrder = await Order.create({
+      shippingInfo,
+      paymentInfo,
+      orderItems,
+      paidAt,
+      totalPrice,
+      totalPriceAfterDiscount,
+      userId: _id,
     });
-    await Product.bulkWrite(update, {});
-    res.json({ message: "success" });
+    res.json({newOrder, success:true})
   } catch (error) {
     throw new Error(error);
   }
@@ -401,9 +409,7 @@ export const getOrders = asyncHandler(async (req, res) => {
   const { _id } = req.user;
   validateMongoID(_id);
   try {
-    const getOrder = await Order.findOne({ orderby: _id }).populate(
-      "products.product"
-    ).populate("orderby");
+    const getOrder = await Order.findOne({ userId: _id })
     res.json(getOrder);
   } catch (error) {
     throw new Error(error);
@@ -412,9 +418,7 @@ export const getOrders = asyncHandler(async (req, res) => {
 
 export const getAllOrders = asyncHandler(async (req, res) => {
   try {
-    const getOrder = await Order.find().populate("products.product").populate(
-      "orderby"
-    );
+    const getOrder = await Order.find()
     res.json(getOrder);
   } catch (error) {
     throw new Error(error);

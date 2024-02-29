@@ -10,6 +10,7 @@ import {
   forgotPasswordToken,
   getAllUsers,
   getCart,
+  deleteProductCart,
   getOneUser,
   getOrders,
   getAllOrders,
@@ -22,6 +23,7 @@ import {
   updatePassword,
   updatedUser,
   viewWishlist,
+  updateQuantity,
 } from "../controllers/userController.js";
 import {
   authMiddleware,
@@ -46,9 +48,11 @@ router.put("/password", authMiddleware, updatePassword);
 router.get("/wishlist", authMiddleware, viewWishlist);
 router.get("/cart", authMiddleware, getCart);
 router.post("/cart", authMiddleware, createCart);
+router.delete("/delete/:prodId", authMiddleware, deleteProductCart);
+router.put("/update-cart/:cartItemId/:newQuantity", authMiddleware, updateQuantity)
 router.delete("/cart", authMiddleware, emptyCart);
 router.post("/cart/apply-coupon", authMiddleware, applyCoupon);
-router.post("/cart/create-cart", authMiddleware, createOrder);
+router.post("/cart/create-order", authMiddleware, createOrder);
 router.get("/get-orders", authMiddleware, getOrders);
 
 //Admin Only Routes
