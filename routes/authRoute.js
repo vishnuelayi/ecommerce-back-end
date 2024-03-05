@@ -31,6 +31,10 @@ import {
   isAdmin,
   unBlockUser,
 } from "../middlewares/authMiddleware.js";
+import {
+  checkoutController,
+  paymentVerification,
+} from "../controllers/paymentController.js";
 
 const router = express.Router();
 
@@ -48,8 +52,14 @@ router.put("/password", authMiddleware, updatePassword);
 router.get("/wishlist", authMiddleware, viewWishlist);
 router.get("/cart", authMiddleware, getCart);
 router.post("/cart", authMiddleware, createCart);
+router.post("/order/checkout", authMiddleware, checkoutController);
+router.post("/order/paymentverification", authMiddleware, paymentVerification);
 router.delete("/delete/:prodId", authMiddleware, deleteProductCart);
-router.put("/update-cart/:cartItemId/:newQuantity", authMiddleware, updateQuantity)
+router.put(
+  "/update-cart/:cartItemId/:newQuantity",
+  authMiddleware,
+  updateQuantity
+);
 router.delete("/cart", authMiddleware, emptyCart);
 router.post("/cart/apply-coupon", authMiddleware, applyCoupon);
 router.post("/cart/create-order", authMiddleware, createOrder);

@@ -46,7 +46,7 @@ export const deleteProduct = asyncHandler(async (req, res) => {
 export const getAproduct = asyncHandler(async (req, res) => {
   const { id } = req.params;
   try {
-    const findItem = await Product.findById(id).populate("color")
+    const findItem = await Product.findById(id).populate("color").populate("ratings.postedBy")
     res.json(findItem);
   } catch (error) {
     throw new Error(error);
@@ -181,7 +181,7 @@ export const rating = asyncHandler(async (req, res) => {
         totalrating: actualRating,
       },
       { new: true }
-    );
+    ).populate("ratings.postedBy");
     res.json(finalProduct);
   } catch (error) {
     throw new Error(error);

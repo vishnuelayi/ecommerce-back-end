@@ -399,7 +399,7 @@ export const createOrder = asyncHandler(async (req, res) => {
       totalPriceAfterDiscount,
       userId: _id,
     });
-    res.json({newOrder, success:true})
+    res.json({ newOrder, success: true });
   } catch (error) {
     throw new Error(error);
   }
@@ -407,10 +407,9 @@ export const createOrder = asyncHandler(async (req, res) => {
 
 export const getOrders = asyncHandler(async (req, res) => {
   const { _id } = req.user;
-  validateMongoID(_id);
   try {
-    const getOrder = await Order.findOne({ userId: _id })
-    res.json(getOrder);
+    const myOrders = await Order.find({ userId: _id }).populate("orderItems.product").populate("orderItems.color");
+    res.json(myOrders).status(200);
   } catch (error) {
     throw new Error(error);
   }
@@ -418,7 +417,7 @@ export const getOrders = asyncHandler(async (req, res) => {
 
 export const getAllOrders = asyncHandler(async (req, res) => {
   try {
-    const getOrder = await Order.find()
+    const getOrder = await Order.find();
     res.json(getOrder);
   } catch (error) {
     throw new Error(error);

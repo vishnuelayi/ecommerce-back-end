@@ -8,11 +8,11 @@ const orderSchema = new mongoose.Schema(
       required: true,
     },
     shippingInfo: {
-      firstname: {
+      firstName: {
         type: String,
         required: true,
       },
-      lastname: {
+      lastName: {
         type: String,
         required: true,
       },
