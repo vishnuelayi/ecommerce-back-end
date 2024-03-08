@@ -24,6 +24,9 @@ import {
   updatedUser,
   viewWishlist,
   updateQuantity,
+  getMonthWiseOrderIncome,
+  getYearlyWiseOrderCount,
+  getSingleOrder,
 } from "../controllers/userController.js";
 import {
   authMiddleware,
@@ -46,12 +49,14 @@ router.post("/forgot-password-token", forgotPasswordToken);
 router.put("/reset-password/:token", resetPassword);
 
 //User Management and Authentication Routes
+
 router.get("/refresh", handleRefreshToken);
 router.get("/logout", logout);
 router.put("/password", authMiddleware, updatePassword);
 router.get("/wishlist", authMiddleware, viewWishlist);
 router.get("/cart", authMiddleware, getCart);
 router.post("/cart", authMiddleware, createCart);
+router.get("/order/:id", authMiddleware,isAdmin,getSingleOrder)
 router.post("/order/checkout", authMiddleware, checkoutController);
 router.post("/order/paymentverification", authMiddleware, paymentVerification);
 router.delete("/delete/:prodId", authMiddleware, deleteProductCart);
@@ -66,10 +71,18 @@ router.post("/cart/create-order", authMiddleware, createOrder);
 router.get("/get-orders", authMiddleware, getOrders);
 
 //Admin Only Routes
+router.get("/monthlyIncome", authMiddleware, isAdmin, getMonthWiseOrderIncome);
+router.get(
+  "/yearlyWiseOrderCount",
+  authMiddleware,
+  isAdmin,
+  getYearlyWiseOrderCount
+);
+
 router.get("/get-all-orders", authMiddleware, isAdmin, getAllOrders);
 router.get("/all-users", authMiddleware, isAdmin, getAllUsers);
 router.get("/:id", authMiddleware, isAdmin, getOneUser);
-router.put("/oders/status/:id", authMiddleware, isAdmin, updateOrderStatus);
+router.put("/oders/status", authMiddleware, isAdmin, updateOrderStatus);
 
 //User Management Routes
 router.put("/user-edit", authMiddleware, updatedUser);

@@ -11,6 +11,7 @@ import sendMail from "./emailController.js";
 import crypto from "crypto";
 import Cart from "../models/cartModel.js";
 import uniqid from "uniqid";
+import { log } from "console";
 
 //register a new user
 export const createUser = asyncHandler(async (req, res) => {
@@ -408,7 +409,9 @@ export const createOrder = asyncHandler(async (req, res) => {
 export const getOrders = asyncHandler(async (req, res) => {
   const { _id } = req.user;
   try {
-    const myOrders = await Order.find({ userId: _id }).populate("orderItems.product").populate("orderItems.color");
+    const myOrders = await Order.find({ userId: _id })
+      .populate("orderItems.product")
+      .populate("orderItems.color");
     res.json(myOrders).status(200);
   } catch (error) {
     throw new Error(error);
@@ -417,30 +420,123 @@ export const getOrders = asyncHandler(async (req, res) => {
 
 export const getAllOrders = asyncHandler(async (req, res) => {
   try {
-    const getOrder = await Order.find();
+    const getOrder = await Order.find().populate("userId");
     res.json(getOrder);
   } catch (error) {
     throw new Error(error);
   }
 });
 
-export const updateOrderStatus = asyncHandler(async (req, res) => {
-  const { status } = req.body;
+export const getSingleOrder = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  validateMongoID(id);
   try {
-    const updatedStatus = await Order.findByIdAndUpdate(
-      id,
+    const getOrder = await Order.findById(id);
+    res.json(getOrder);
+  } catch (err) {
+    throw new Error(err);
+  }
+});
+
+export const updateOrderStatus = asyncHandler(async (req, res) => {
+  const { updatedStatus, itemId } = req.body;
+
+  validateMongoID(itemId);
+  try {
+    const updatedOrderStatus = await Order.findByIdAndUpdate(
+      itemId,
       {
-        orderstatus: status,
-        paymentIntent: {
-          status: status,
-        },
+        orderStatus: updatedStatus,
       },
       { new: true }
     );
-    res.json(updatedStatus);
+    res.json(updatedOrderStatus);
   } catch (error) {
     throw new Error(error);
   }
+});
+
+export const getMonthWiseOrderIncome = asyncHandler(async (req, res) => {
+  let month = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+  let d = new Date();
+  let endDate = "";
+  d.setDate(1);
+  for (let index = 0; index < 11; index++) {
+    d.setMonth(d.getMonth() - 1);
+    endDate = month[d.getMonth()] + " " + d.getFullYear();
+  }
+  const data = await Order.aggregate([
+    {
+      $match: {
+        createdAt: {
+          $lte: new Date(),
+          $gte: new Date(endDate),
+        },
+      },
+    },
+    {
+      $group: {
+        _id: {
+          month: "$month",
+        },
+        amount: { $sum: "$totalPriceAfterDiscount" },
+        count: { $sum: 1 },
+      },
+    },
+  ]);
+  res.json(data);
+});
+
+export const getYearlyWiseOrderCount = asyncHandler(async (req, res) => {
+  let month = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+  let d = new Date();
+  let endDate = "";
+  d.setDate(1);
+  for (let index = 0; index < 11; index++) {
+    d.setMonth(d.getMonth() - 1);
+    endDate = month[d.getMonth()] + " " + d.getFullYear();
+  }
+  const data = await Order.aggregate([
+    {
+      $match: {
+        createdAt: {
+          $lte: new Date(),
+          $gte: new Date(endDate),
+        },
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        count: { $sum: 1 },
+        amount: { $sum: "$totalPriceAfterDiscount" },
+      },
+    },
+  ]);
+  res.json(data);
 });
