@@ -20,6 +20,10 @@ const orderSchema = new mongoose.Schema(
         type: String,
         required: true,
       },
+      country: {
+        type: String,
+        required: true,
+      },
       city: {
         type: String,
         required: true,
@@ -76,13 +80,14 @@ const orderSchema = new mongoose.Schema(
       type: String,
       default: new Date().getMonth(),
     },
+    shippingCost:{
+      type:Number
+    },
     totalPrice: {
       type: Number,
-      required: true,
     },
     totalPriceAfterDiscount: {
       type: Number,
-      required: true,
     },
     orderStatus: {
       type: String,

@@ -345,8 +345,8 @@ export const emptyCart = asyncHandler(async (req, res) => {
   const { _id } = req.user;
 
   try {
-    // const user = await User.findById(_id);
-    const cart = await Cart.findOneAndDelete({ orderby: _id });
+    
+    const cart = await Cart.deleteMany({ userId:_id });
     res.json(cart);
   } catch (error) {
     throw new Error(error);
@@ -386,7 +386,6 @@ export const createOrder = asyncHandler(async (req, res) => {
     shippingInfo,
     paymentInfo,
     orderItems,
-    paidAt,
     totalPrice,
     totalPriceAfterDiscount,
   } = req.body;
@@ -395,7 +394,6 @@ export const createOrder = asyncHandler(async (req, res) => {
       shippingInfo,
       paymentInfo,
       orderItems,
-      paidAt,
       totalPrice,
       totalPriceAfterDiscount,
       userId: _id,

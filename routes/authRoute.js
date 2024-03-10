@@ -65,7 +65,7 @@ router.put(
   authMiddleware,
   updateQuantity
 );
-router.delete("/cart", authMiddleware, emptyCart);
+router.delete("/empty-cart", authMiddleware, emptyCart);
 router.post("/cart/apply-coupon", authMiddleware, applyCoupon);
 router.post("/cart/create-order", authMiddleware, createOrder);
 router.get("/get-orders", authMiddleware, getOrders);
