@@ -9,7 +9,8 @@ export const createProduct = asyncHandler(async (req, res) => {
     if (req.body.title) {
       req.body.slug = slugify(req.body.title);
     }
-    const item = await Product.create(req.body);
+    const item = await Product.create(req.body)
+    
     res.json(item);
   } catch (error) {
     throw new Error(error);
@@ -95,7 +96,7 @@ export const getAllProducts = asyncHandler(async (req, res) => {
       const productCount = await Product.countDocuments();
       if (skip >= productCount) throw new Error("This page is not Exist");
     }
-    const product = await query.populate("color")
+    const product = await query.populate("color").populate("category")
     res.json(product);
   } catch (error) {
     throw new Error(error);

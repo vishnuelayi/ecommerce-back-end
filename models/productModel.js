@@ -22,12 +22,12 @@ const productSchema = mongoose.Schema(
       required: true,
     },
     category: {
-      type: String,
-      required: true,
+      type: mongoose.Schema.Types.ObjectId,
+      ref:"Category"
     },
     brand: {
-      type: String,
-      required: true,
+      type: mongoose.Schema.Types.ObjectId,
+      ref:"brandCategory"
     },
     quantity: {
       type: Number,

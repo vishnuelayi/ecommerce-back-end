@@ -11,8 +11,9 @@ const blogSchema = new mongoose.Schema(
       required: true,
     },
     category: {
-      type: String,
-      required: true,
+      type: mongoose.Schema.Types.ObjectId,
+      ref:"blogCategory"
+      
     },
     numViews: {
       type: Number,
@@ -36,8 +37,7 @@ const blogSchema = new mongoose.Schema(
     auther: {
       type: String,
       default: "Admin",
-    },
-    images: [],
+    }
   },
   {
     toJSON: {
