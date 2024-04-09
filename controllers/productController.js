@@ -47,7 +47,7 @@ export const deleteProduct = asyncHandler(async (req, res) => {
 export const getAproduct = asyncHandler(async (req, res) => {
   const { id } = req.params;
   try {
-    const findItem = await Product.findById(id).populate("color").populate("ratings.postedBy")
+    const findItem = await Product.findById(id).populate("color").populate("ratings.postedBy").populate("category").populate("brand");
     res.json(findItem);
   } catch (error) {
     throw new Error(error);
@@ -96,7 +96,7 @@ export const getAllProducts = asyncHandler(async (req, res) => {
       const productCount = await Product.countDocuments();
       if (skip >= productCount) throw new Error("This page is not Exist");
     }
-    const product = await query.populate("color").populate("category")
+    const product = await query.populate("color").populate("category").populate("brand")
     res.json(product);
   } catch (error) {
     throw new Error(error);
@@ -119,14 +119,14 @@ export const addToWishList = asyncHandler(async (req, res) => {
         },
         { new: true }
       );
-      res.json(user);
+      res.json({message:"Removed from wishlist"});
     } else {
       let user = await User.findByIdAndUpdate(
         _id,
         { $push: { whishlist: prodId } },
         { new: true }
       );
-      res.json(user);
+      res.json({message:"Added to wishlist"});
     }
   } catch (error) {
     throw new Error(error);
