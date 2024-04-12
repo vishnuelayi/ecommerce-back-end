@@ -23,11 +23,11 @@ const productSchema = mongoose.Schema(
     },
     category: {
       type: mongoose.Schema.Types.ObjectId,
-      ref:"Category"
+      ref: "Category",
     },
     brand: {
       type: mongoose.Schema.Types.ObjectId,
-      ref:"brandCategory"
+      ref: "brandCategory",
     },
     quantity: {
       type: Number,
@@ -40,9 +40,7 @@ const productSchema = mongoose.Schema(
     images: {
       type: Array,
     },
-    tag: {
-      type: String,
-    },
+    tag: [String],
     color: [{ type: mongoose.Schema.Types.ObjectId, ref: "Color" }],
     ratings: [
       {

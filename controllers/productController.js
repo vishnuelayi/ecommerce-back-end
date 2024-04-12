@@ -189,4 +189,22 @@ export const rating = asyncHandler(async (req, res) => {
   }
 });
 
+export const getItemOnQuery = asyncHandler(async (req, res) => {
+  try{
+    const limit = parseInt(req.query.limit) || 10;
+    const startIndex = parseInt(req.query.startIndex) || 0;
+
+    const tag = req.query.tag ? {tag:{$all : req.query.tag.split(',')}} : {};
+
+    const item = await Product.find({...tag})
+    return res.json({
+      item,
+      totalCount: await Product.countDocuments({...tag})
+    });
+  }
+  catch(error) {
+    throw new Error(error);
+  }
+})
+
 

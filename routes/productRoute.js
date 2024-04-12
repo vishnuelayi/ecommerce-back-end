@@ -5,9 +5,9 @@ import {
   deleteProduct,
   getAllProducts,
   getAproduct,
+  getItemOnQuery,
   rating,
   updateProduct,
- 
 } from "../controllers/productController.js";
 import { authMiddleware, isAdmin } from "../middlewares/authMiddleware.js";
 
@@ -17,6 +17,7 @@ router.post("/", authMiddleware, isAdmin, createProduct);
 
 router.put("/rating", authMiddleware, rating);
 router.put("/addtowishlist/", authMiddleware, addToWishList);
+router.get("/get", getItemOnQuery);
 router.put("/:id", authMiddleware, isAdmin, updateProduct);
 router.delete("/:id", authMiddleware, isAdmin, deleteProduct);
 
