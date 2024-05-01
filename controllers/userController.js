@@ -173,11 +173,11 @@ export const logout = asyncHandler(async (req, res) => {
 
 //update a user
 export const updatedUser = asyncHandler(async (req, res) => {
-  const { _id } = req.user;
-  validateMongoID(_id);
+  const { id } = req.params;
+  validateMongoID(id);
   try {
     const updateUser = await User.findByIdAndUpdate(
-      _id,
+      id,
       {
         firstname: req?.body?.firstname,
         lastname: req?.body?.lastname,

@@ -85,7 +85,7 @@ router.get("/:id", authMiddleware, isAdmin, getOneUser);
 router.put("/oders/status", authMiddleware, isAdmin, updateOrderStatus);
 
 //User Management Routes
-router.put("/user-edit", authMiddleware, updatedUser);
+router.put("/user-edit/:id", authMiddleware, updatedUser);
 router.put("/save-address", authMiddleware, saveAddress);
 router.put("/block-user/:id", authMiddleware, isAdmin, blockUser);
 router.put("/unblock-user/:id", authMiddleware, isAdmin, unBlockUser);
