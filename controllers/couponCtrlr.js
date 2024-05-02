@@ -5,7 +5,17 @@ import e from "express";
 
 export const createCoupon = asyncHandler(async (req, res) => {
   try {
-    const newCoupon = await Coupon.create(req.body);
+    const { name, expiry, discount } = req.body;
+
+    // Convert the expiry date to ISO format
+    const formattedExpiry = new Date(expiry).toISOString();
+
+    const newCoupon = await Coupon.create({
+      name,
+      expiry: formattedExpiry,
+      discount,
+    });
+
     res.json(newCoupon);
   } catch (error) {
     throw new Error(error);

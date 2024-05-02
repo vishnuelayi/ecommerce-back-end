@@ -345,36 +345,43 @@ export const emptyCart = asyncHandler(async (req, res) => {
   const { _id } = req.user;
 
   try {
-    
-    const cart = await Cart.deleteMany({ userId:_id });
+    const cart = await Cart.deleteMany({ userId: _id });
     res.json(cart);
   } catch (error) {
     throw new Error(error);
   }
 });
 
+//for apply an existing coupon code upon aleready created order
 export const applyCoupon = asyncHandler(async (req, res) => {
   const { coupon } = req.body;
   const { _id } = req.user;
+
   try {
     const validCoupon = await Coupon.findOne({ name: coupon });
+
     if (validCoupon === null) {
       throw new Error("Invalid Coupon");
     }
 
-    let { cartTotal } = await Cart.findOne({ orderby: _id }).populate(
-      "products.product"
-    );
-    let totalAfterDiscount = (
-      cartTotal -
-      (cartTotal + validCoupon.discount) / 100
+    //checking the applied coupon is expired or not
+    const isExpired = validCoupon.expiry < new Date();
+
+    if (isExpired) {
+      throw new Error("Coupon has expired");
+    }
+
+    let { totalPrice } = await Order.findOne({ userId: _id });
+    let totalPriceAfterDiscount = (
+      totalPrice -
+      (totalPrice + validCoupon.discount) / 100
     ).toFixed(2);
-    await Cart.findOneAndUpdate(
-      { orderby: _id },
-      { totalAfterDiscount },
+    await Order.findOneAndUpdate(
+      { userId: _id },
+      { totalPriceAfterDiscount },
       { new: true }
     );
-    res.json(totalAfterDiscount);
+    res.json(totalPriceAfterDiscount);
   } catch (error) {
     throw new Error(error);
   }
