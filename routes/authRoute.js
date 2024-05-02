@@ -82,7 +82,7 @@ router.get(
 router.get("/get-all-orders", authMiddleware, isAdmin, getAllOrders);
 router.get("/all-users", authMiddleware, isAdmin, getAllUsers);
 router.get("/:id", authMiddleware, isAdmin, getOneUser);
-router.put("/oders/status", authMiddleware, isAdmin, updateOrderStatus);
+router.put("/oders/status/:itemId", authMiddleware, isAdmin, updateOrderStatus);
 
 //User Management Routes
 router.put("/user-edit/:id", authMiddleware, updatedUser);

@@ -313,13 +313,14 @@ export const getCart = asyncHandler(async (req, res) => {
   }
 });
 
+//for deleting a product from the cart, each product in the cart have seperate _id , dont use the product id
 export const deleteProductCart = asyncHandler(async (req, res) => {
   const { _id } = req.user;
   const { prodId } = req.params;
 
   try {
-    const cart = await Cart.deleteOne({ userId: _id, _id: prodId });
-    res.json(cart);
+    const cart = await Cart.findOne({userId:_id, _id:prodId})
+    res.json(cart)
   } catch (error) {
     throw new Error(error);
   }
@@ -443,7 +444,8 @@ export const getSingleOrder = asyncHandler(async (req, res) => {
 });
 
 export const updateOrderStatus = asyncHandler(async (req, res) => {
-  const { updatedStatus, itemId } = req.body;
+  const { updatedStatus } = req.body;
+  const {itemId} = req.params;
 
   validateMongoID(itemId);
   try {
