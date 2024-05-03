@@ -23,8 +23,8 @@ router.put(
   blogImgResize,
   uploadImages
 );
-router.put("/likes", authMiddleware, liketheBlog);
-router.put("/dislikes", authMiddleware, disliketheBlog);
+router.put("/like/:blogId", authMiddleware, liketheBlog);
+router.put("/dislike/:blogId", authMiddleware, disliketheBlog);
 router.put("/:id", authMiddleware, isAdmin, updateBlog);
 router.delete("/:id", authMiddleware, isAdmin, deleteBlog);
 router.get("/:id", getBlog);
