@@ -10,7 +10,7 @@ import {
   updateBlog,
   uploadImages,
 } from "../controllers/blogController.js";
-import { uploadPhoto, blogImgResize } from "../middlewares/uploadImage.js";
+import { uploadPhoto } from "../middlewares/uploadImage.js";
 
 const router = express.Router();
 
@@ -20,7 +20,7 @@ router.put(
   authMiddleware,
   isAdmin,
   uploadPhoto.array("images", 10),
-  blogImgResize,
+  
   uploadImages
 );
 router.put("/like/:blogId", authMiddleware, liketheBlog);
