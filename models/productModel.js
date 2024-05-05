@@ -37,9 +37,7 @@ const productSchema = mongoose.Schema(
       type: Number,
       default: 0,
     },
-    images: {
-      type: Array,
-    },
+    images: [],
     tag: [String],
     color: [{ type: mongoose.Schema.Types.ObjectId, ref: "Color" }],
     ratings: [

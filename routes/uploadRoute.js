@@ -6,7 +6,7 @@ import { uploadImages } from "../controllers/uploadController.js";
 const router = express.Router();
 
 router.put(
-  "/",
+  "/:prodId",
   authMiddleware,
   isAdmin,
   uploadPhoto.array("images", 10),

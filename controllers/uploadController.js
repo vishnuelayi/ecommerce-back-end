@@ -1,8 +1,10 @@
 import expressAsyncHandler from "express-async-handler";
 import { validateMongoID } from "../utils/validateMongoId.js";
 import cloudinaryUploadImg from "../utils/cloudinary.js";
+import Product from "../models/productModel.js";
 
 export const uploadImages = expressAsyncHandler(async (req, res) => {
+  const {prodId} = req.params;
   try {
     const uploader = async (path) => await cloudinaryUploadImg(path, "images");
     const urls = [];
@@ -19,6 +21,15 @@ export const uploadImages = expressAsyncHandler(async (req, res) => {
 
     // Combine the uploaded URLs into the urls array
     urls.push(...uploadedUrls);
+
+    // Update the product with the uploaded image URLs
+    const product = await Product.findByIdAndUpdate(
+      prodId,
+      {
+        $push: { images: { $each: urls } },
+      },
+      { new: true }
+    );
 
     
     res.status(200).json({ status: "success", data: urls });

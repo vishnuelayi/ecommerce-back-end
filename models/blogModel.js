@@ -29,11 +29,7 @@ const blogSchema = new mongoose.Schema(
     },
     likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     dislikes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-    image: {
-      type: String,
-      default:
-        "https://blog.adobe.com/en/publish/2020/11/03/media_1875ab4008072aa71eb135980d7ea5ae4247ce80b.png?width=2000&format=webply&optimize=medium",
-    },
+    images: {type: Array, default: ['https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTrNLuexnu0Z1bpaX-202aa0IqydXHtMkuIa6jUPtNspQi1uyVG5vxAmMAX3w&s']},
     auther: {
       type: String,
       default: "Admin",

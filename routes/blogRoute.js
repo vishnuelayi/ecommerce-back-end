@@ -16,7 +16,7 @@ const router = express.Router();
 
 router.post("/", authMiddleware, isAdmin, createBlog);
 router.put(
-  "/upload/:id",
+  "/upload/:blogId",
   authMiddleware,
   isAdmin,
   uploadPhoto.array("images", 10),
