@@ -23,4 +23,26 @@ const cloudinaryUploadImg = async (fileToUpload, folder) => {
   }
 };
 
+export const cloudinaryDeleteImg = (publicId) => {
+  return new Promise((resolve, reject) => {
+    cloudinary.uploader.destroy(publicId, (error, result) => {
+      if(error) {
+        reject(error);
+      } else {
+        resolve(
+          
+        {
+          url: result.secure_url,
+          public_id: result.public_id,
+          asset_id: result.asset_id,
+        },
+        {
+          resource_type:"auto"
+        }
+        );
+      }
+    });
+  });
+}
+
 export default cloudinaryUploadImg;

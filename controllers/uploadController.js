@@ -14,8 +14,8 @@ export const uploadImages = expressAsyncHandler(async (req, res) => {
     const uploadedUrls = await Promise.all(
       files.map(async (file) => {
         const { path } = file;
-        const { url } = await uploader(path);
-        return url;
+        const { url, public_id } = await uploader(path);
+        return {url, public_id};
       })
     );
 
@@ -31,7 +31,7 @@ export const uploadImages = expressAsyncHandler(async (req, res) => {
       { new: true }
     );
 
-    
+    console.log(urls);
     res.status(200).json({ status: "success", data: urls });
   } catch (error) {
     throw new Error(error);
