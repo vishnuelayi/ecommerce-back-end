@@ -24,7 +24,11 @@ const MONGO_URI = process.env.DB_URI;
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin:["https://ecommerce-back-end-kdiw5c6ru-vishnu-elayis-projects.vercel.app/"],
+  methods:["POST", "GET"],
+  credentials:true
+}));
 
 app.use(morgan("dev"));
 app.use(bodyParser.json());
