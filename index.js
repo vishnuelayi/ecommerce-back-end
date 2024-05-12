@@ -24,7 +24,10 @@ const MONGO_URI = process.env.DB_URI;
 
 const app = express();
 
-app.use(cors());
+const corsOptions = {
+  origin: "https://creative-ecommerce-front-end.onrender.com", 
+};
+app.use(cors(corsOptions));
 
 app.use(morgan("dev"));
 app.use(bodyParser.json());
